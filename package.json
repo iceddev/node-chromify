@@ -1,0 +1,32 @@
+{
+  "name": "node-browserify",
+  "version": "0.0.1",
+  "description": "Node in your Chrome",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/iceddev/node-chromify.git"
+  },
+  "keywords": [
+    "node",
+    "browser"
+  ],
+  "devDependencies": {
+    "browserify": "1.16.x",
+    "grunt-browserify": "git://github.com/bancek/grunt-browserify",
+    "http-parser-js": "0.0.0",
+    "net-chromify": "git://github.com/iceddev/net-chromify.git",
+    "freelist-chromify": "git://github.com/iceddev/freelist-chromify.git",
+    "string_decoder-chromify": "git://github.com/iceddev/string_decoder-chromify.git",
+    "http-chromify": "git://github.com/iceddev/http-chromify.git"
+  },
+  "author": {
+    "name": "Blaine Bublitz",
+    "email": "blaine@iceddev.com",
+    "url": "http://iceddev.com"
+  },
+  "license": "Apache2",
+  "engine": {
+    "node": ">=0.8.0"
+  }
+}
