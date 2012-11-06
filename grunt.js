@@ -2,20 +2,6 @@
 module.exports = function(grunt) {
   'use strict';
 
-  var browserifyConfig = {
-    entries: [],
-    options: {
-      exports: ['require', 'http'],
-      require: {
-        string_decoder: 'string_decoder-chromify',
-        freelist: 'freelist-chromify',
-        net: 'net-chromify',
-        http_parser: 'http-parser-js',
-        http: 'http-chromify'
-      }
-    }
-  };
-
   // Project configuration.
   grunt.initConfig({
     lint: {
@@ -25,7 +11,54 @@ module.exports = function(grunt) {
       files: ['test/**/*.js']
     },
     browserify: {
-      "example/plugin/node.js": browserifyConfig
+      'example/plugin/node.js': {
+        options: {
+          exports: ['require', 'http'],
+          require: {
+            string_decoder: 'string_decoder-chromify',
+            freelist: 'freelist-chromify',
+            net: 'net-chromify',
+            http_parser: 'http-parser-js',
+            http: 'http-chromify'
+          }
+        }
+      },
+      'example/full/node.js': {
+        options: {
+          exports: [
+            'require',
+            'http',
+            'events',
+            'path',
+            'vm',
+            'crypto',
+            'assert',
+            'url',
+            'buffer',
+            'util',
+            'querystring',
+            'stream',
+            'process'
+          ],
+          require: {
+            string_decoder: 'string_decoder-chromify',
+            freelist: 'freelist-chromify',
+            net: 'net-chromify',
+            http_parser: 'http-parser-js',
+            http: 'http-chromify',
+            events: 'events',
+            path: 'path',
+            vm: 'vm',
+            crypto: 'crypto',
+            assert: 'assert',
+            url: 'url',
+            buffer: 'buffer',
+            util: 'util',
+            querystring: 'querystring',
+            stream: 'stream'
+          }
+        }
+      }
     },
     watch: {
       files: '<config:lint.files>',
