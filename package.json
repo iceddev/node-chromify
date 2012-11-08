@@ -14,7 +14,7 @@
   "devDependencies": {
     "browserify": "1.16.x",
     "grunt-browserify": "git://github.com/bancek/grunt-browserify",
-    "http-parser-js": "0.0.0",
+    "http-parser-js": "git://github.com/iceddev/http-parser-js.git",
     "net-chromify": "git://github.com/iceddev/net-chromify.git",
     "freelist-chromify": "git://github.com/iceddev/freelist-chromify.git",
     "string_decoder-chromify": "git://github.com/iceddev/string_decoder-chromify.git",
