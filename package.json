@@ -7,6 +7,9 @@
     "type": "git",
     "url": "http://github.com/iceddev/node-chromify.git"
   },
+  "scripts": {
+    "install": "grunt"
+  },
   "keywords": [
     "node",
     "browser"
