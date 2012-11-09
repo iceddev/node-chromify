@@ -23,6 +23,18 @@ module.exports = function(grunt) {
           }
         }
       },
+      'example/post/node.js': {
+        options: {
+          exports: ['require', 'http'],
+          require: {
+            string_decoder: 'string_decoder-chromify',
+            freelist: 'freelist-chromify',
+            net: 'net-chromify',
+            http_parser: 'http-parser-js',
+            http: 'http-chromify'
+          }
+        }
+      },
       'example/debug/node.js': {
         options: {
           exports: [
