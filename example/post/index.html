@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ChromeNode POST Demo</title>
+        <!-- build:css styles/app.css -->
+        <link rel="stylesheet" href="styles/main.css">
+        <!-- endbuild -->
+        <link rel="stylesheet" href="styles/bootstrap.css">
+        <script src="node.js"></script>
+        <script src="index.js"></script>
+        <style>
+          button.fix{ margin-bottom: 9px; }
+          #result { overflow-y: scroll; }
+        </style>
+    </head>
+    <body>
+        <h1>ChromeNode Server POST demo.</h1>
+        <form method="post" action="http://127.0.0.1:1338" target="postframe">
+        test<input type="text" name="test">
+        <input type="submit" class="btn btn-primary fix" id="go" value="post">
+        </form>
+        <iframe name="postframe" height="100" width="100"></iframe>
+    </body>
+</html>
