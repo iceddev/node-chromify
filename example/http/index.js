@@ -18,9 +18,9 @@ onload = function() {
 
   var http = require('http');
   http.createServer(function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('<h1>Hello World</h1><ul><li>Test 1</li><li style="color: red">Test Red</li></ul><form method="post" action=""><input type="text" id="test" name="test" value="Type here" /><input type="submit" /></form>');
-  }).listen(1337, '0.0.0.0');
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello World\n');
+  }).listen(1337, '127.0.0.1');
   console.log('Server running at http://127.0.0.1:1337/');
 
 };

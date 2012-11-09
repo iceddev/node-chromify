@@ -913,14 +913,11 @@ net.Socket.prototype.connect = function() {
 net.Socket.prototype.destroy = function() {
   chrome.socket.disconnect(this._socketInfo.socketId);
   chrome.socket.destroy(this._socketInfo.socketId);
-  this._resetTimeout();
   clearTimeout(this._readTimer);
 };
 net.Socket.prototype.destroySoon = function() {
-  // For now :P
+  // Blaine's solution to this stub - probably not correct impl
   chrome.socket.disconnect(this._socketInfo.socketId);
-  chrome.socket.destroy(this._socketInfo.socketId);
-  this._resetTimeout();
   clearTimeout(this._readTimer);
 };
 
@@ -946,7 +943,7 @@ net.Socket.prototype._read = function() {
     // ArrayBuffer to Buffer if no encoding.
     var buffer = arrayBufferToBuffer(readInfo.data);
     self.emit('data', buffer);
-    if (self.ondata) self.ondata(buffer.parent, buffer.offset, buffer.parent.length);
+    if (self.ondata) self.ondata(buffer.parent, buffer.offset, buffer.offset + buffer.length);
   });
 
   // enque another read soon. TODO: Is there are better way to controll speed.
@@ -982,13 +979,12 @@ net.Socket.prototype.write = function(data, encoding, callback) {
 net.Socket.prototype._resetTimeout = function() {
   var self = this;
   if(!!self._timeout == false) clearTimeout(self._timeout);
+  if(!!self._timeoutValue) self._timeout = setTimeout(function() { self.emit('timeout') }, self._timeoutValue);
 };
 
 net.Socket.prototype.setTimeout = function(timeout, callback) {
-  var self = this;
   this._timeoutValue = timeout;
-  // this._resetTimeout();
-  if(!!self._timeoutValue) self._timeout = setTimeout(function() { self.emit('timeout') }, self._timeoutValue);
+  this._resetTimeout();
 };
 
 net.Socket.prototype.ref = function() {};
@@ -3467,7 +3463,10 @@ HTTPParser.prototype.HEADER = function () {
   }
 };
 // Stub BODY so my requests don't throw errors
-HTTPParser.prototype.BODY = function(){};
+HTTPParser.prototype.BODY = function(){
+  this.body = this.chunk.toString("ascii", this.offset, this.end);
+  this.offset = this.end;
+};
 
 });
 
