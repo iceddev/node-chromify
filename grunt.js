@@ -11,7 +11,7 @@ module.exports = function(grunt) {
       files: ['test/**/*.js']
     },
     browserify: {
-      'example/plugin/node.js': {
+      'example/http/node.js': {
         options: {
           exports: ['require', 'http'],
           require: {
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
           }
         }
       },
-      'example/full/node.js': {
+      'example/debug/node.js': {
         options: {
           exports: [
             'require',
