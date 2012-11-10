@@ -20,6 +20,7 @@ onload = function() {
   http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     if (req.method == 'POST') {
+      req.setEncoding('ascii');
       var body = '';
       req.on('data', function (data) {
           body += data;
