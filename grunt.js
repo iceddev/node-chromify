@@ -50,6 +50,7 @@ module.exports = function(grunt) {
             'util',
             'querystring',
             'stream',
+            'os',
             'process'
           ],
           require: {
@@ -67,6 +68,7 @@ module.exports = function(grunt) {
             buffer: 'buffer',
             util: 'util',
             querystring: 'querystring',
+            os: 'os-chromify',
             stream: 'stream'
           }
         }

@@ -30,7 +30,11 @@ onload = function() {
     var util = require('util');
     var querystring = require('querystring');
     var stream = require('stream');
-
+    var os = require('os');
+    // Chrome API is async
+    setTimeout(function(){
+	console.dir( os.networkInterfaces() );
+    },25);
     console.log(process);
   };
 
