@@ -21,7 +21,8 @@
     "net-chromify": "git://github.com/iceddev/net-chromify.git",
     "freelist-chromify": "git://github.com/iceddev/freelist-chromify.git",
     "string_decoder-chromify": "git://github.com/iceddev/string_decoder-chromify.git",
-    "http-chromify": "git://github.com/iceddev/http-chromify.git"
+    "http-chromify": "git://github.com/iceddev/http-chromify.git",
+    "os-chromify":"git://github.com/adrees/os-chromify.git"
   },
   "author": {
     "name": "Blaine Bublitz",

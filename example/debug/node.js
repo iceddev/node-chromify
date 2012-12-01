@@ -344,7 +344,7 @@ process.nextTick = (function () {
     ;
 
     if (canSetImmediate) {
-        return window.setImmediate;
+        return function (f) { return window.setImmediate(f) };
     }
 
     if (canPost) {
@@ -1015,6 +1015,13 @@ var isArray = typeof Array.isArray === 'function'
         return Object.prototype.toString.call(xs) === '[object Array]'
     }
 ;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
 
 // By default EventEmitters will print a warning if more than
 // 10 listeners are added to it. This is a useful default which
@@ -1151,7 +1158,7 @@ EventEmitter.prototype.removeListener = function(type, listener) {
   var list = this._events[type];
 
   if (isArray(list)) {
-    var i = list.indexOf(listener);
+    var i = indexOf(list, listener);
     if (i < 0) return this;
     list.splice(i, 1);
     if (list.length == 0)
@@ -1947,6 +1954,17 @@ SlowBuffer.prototype.slice = function(start, end) {
   return new Buffer(this, end - start, +start);
 };
 
+SlowBuffer.prototype.copy = function(target, targetstart, sourcestart, sourceend) {
+  var temp = [];
+  for (var i=sourcestart; i<sourceend; i++) {
+    assert.ok(typeof this[i] !== 'undefined', "copying undefined buffer bytes!");
+    temp.push(this[i]);
+  }
+
+  for (var i=targetstart; i<targetstart+temp.length; i++) {
+    target[i] = temp[i-targetstart];
+  }
+};
 
 function coerce(length) {
   // Coerce length to a number (possibly NaN), round up
@@ -2040,6 +2058,35 @@ Buffer.isBuffer = function isBuffer(b) {
   return b instanceof Buffer || b instanceof SlowBuffer;
 };
 
+Buffer.concat = function (list, totalLength) {
+  if (!Array.isArray(list)) {
+    throw new Error("Usage: Buffer.concat(list, [totalLength])\n \
+      list should be an Array.");
+  }
+
+  if (list.length === 0) {
+    return new Buffer(0);
+  } else if (list.length === 1) {
+    return list[0];
+  }
+
+  if (typeof totalLength !== 'number') {
+    totalLength = 0;
+    for (var i = 0; i < list.length; i++) {
+      var buf = list[i];
+      totalLength += buf.length;
+    }
+  }
+
+  var buffer = new Buffer(totalLength);
+  var pos = 0;
+  for (var i = 0; i < list.length; i++) {
+    var buf = list[i];
+    buf.copy(buffer, pos);
+    pos += buf.length;
+  }
+  return buffer;
+};
 
 // Inspect
 Buffer.prototype.inspect = function inspect() {
@@ -2308,7 +2355,7 @@ Buffer.prototype.readUInt8 = function(offset, noAssert) {
         'Trying to read beyond buffer length');
   }
 
-  return buffer[offset];
+  return buffer.parent[buffer.offset + offset];
 };
 
 function readUInt16(buffer, offset, isBigEndian, noAssert) {
@@ -2327,11 +2374,11 @@ function readUInt16(buffer, offset, isBigEndian, noAssert) {
   }
 
   if (isBigEndian) {
-    val = buffer[offset] << 8;
-    val |= buffer[offset + 1];
+    val = buffer.parent[buffer.offset + offset] << 8;
+    val |= buffer.parent[buffer.offset + offset + 1];
   } else {
-    val = buffer[offset];
-    val |= buffer[offset + 1] << 8;
+    val = buffer.parent[buffer.offset + offset];
+    val |= buffer.parent[buffer.offset + offset + 1] << 8;
   }
 
   return val;
@@ -2360,15 +2407,15 @@ function readUInt32(buffer, offset, isBigEndian, noAssert) {
   }
 
   if (isBigEndian) {
-    val = buffer[offset + 1] << 16;
-    val |= buffer[offset + 2] << 8;
-    val |= buffer[offset + 3];
-    val = val + (buffer[offset] << 24 >>> 0);
+    val = buffer.parent[buffer.offset + offset + 1] << 16;
+    val |= buffer.parent[buffer.offset + offset + 2] << 8;
+    val |= buffer.parent[buffer.offset + offset + 3];
+    val = val + (buffer.parent[buffer.offset + offset] << 24 >>> 0);
   } else {
-    val = buffer[offset + 2] << 16;
-    val |= buffer[offset + 1] << 8;
-    val |= buffer[offset];
-    val = val + (buffer[offset + 3] << 24 >>> 0);
+    val = buffer.parent[buffer.offset + offset + 2] << 16;
+    val |= buffer.parent[buffer.offset + offset + 1] << 8;
+    val |= buffer.parent[buffer.offset + offset];
+    val = val + (buffer.parent[buffer.offset + offset + 3] << 24 >>> 0);
   }
 
   return val;
@@ -2440,12 +2487,12 @@ Buffer.prototype.readInt8 = function(offset, noAssert) {
         'Trying to read beyond buffer length');
   }
 
-  neg = buffer[offset] & 0x80;
+  neg = buffer.parent[buffer.offset + offset] & 0x80;
   if (!neg) {
-    return (buffer[offset]);
+    return (buffer.parent[buffer.offset + offset]);
   }
 
-  return ((0xff - buffer[offset] + 1) * -1);
+  return ((0xff - buffer.parent[buffer.offset + offset] + 1) * -1);
 };
 
 function readInt16(buffer, offset, isBigEndian, noAssert) {
@@ -6621,6 +6668,68 @@ require.define("/node_modules/crypto-browserify/rng.js",function(require,module,
 }())
 });
 
+require.define("/node_modules/os-chromify/package.json",function(require,module,exports,__dirname,__filename,process,global){module.exports = {"main":"index.js"}
+});
+
+require.define("/node_modules/os-chromify/index.js",function(require,module,exports,__dirname,__filename,process,global){var os = module.exports;
+var _networkInterfaces;
+var regIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))/;
+
+var onNetworkList = function( networkInterfaces ) {
+	_networkInterfaces = {};
+	networkInterfaces.forEach( function( nInterface ) {
+		addInterface( nInterface.name, nInterface.address );
+	});
+};
+
+var addInterface = function( name, address ) {
+	if ( !( name in _networkInterfaces ) ) {
+		_networkInterfaces[ name ] = [];	
+	}
+	_networkInterfaces[ name ].push( {
+		address: address,
+	       	family: getAddressFamily( address ), 
+		internal: false
+	});
+
+};
+
+var getAddressFamily = function( address ) {
+	if ( address.match( regIPv4 ) ) {
+		return 'IPv4';
+	}else{
+		return 'IPv6';
+	}
+};
+
+
+os.networkInterfaces = function(){
+	return _networkInterfaces;
+}
+// This is async in Chrome so it's called on init
+chrome.socket.getNetworkList( onNetworkList );
+
+
+;['tmpDir'
+,'hostname'
+,'type'
+,'platform'
+,'arch'
+,'release'
+,'uptime'
+,'loadavg'
+,'totalmem'
+,'freemem'
+,'cpus'
+,'EOL'].forEach(function (name) {
+  os[name] = function () {
+    console.error('sorry,' + name + 'is not implemented yet' );
+  }
+})
+
+
+});
+
 require.alias("string_decoder-chromify", "/node_modules/string_decoder");
 
 require.alias("freelist-chromify", "/node_modules/freelist");
@@ -6648,6 +6757,8 @@ require.alias("buffer", "/node_modules/buffer");
 require.alias("util", "/node_modules/util");
 
 require.alias("querystring", "/node_modules/querystring");
+
+require.alias("os-chromify", "/node_modules/os");
 
 require.alias("stream", "/node_modules/stream");
 
