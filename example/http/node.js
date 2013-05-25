@@ -927,7 +927,7 @@ net.Socket.prototype.setEncoding = function(encoding) {
 
 net.Socket.prototype.setNoDelay = function(noDelay) {
   noDelay = (noDelay === undefined) ? true : noDelay;
-  chrome.socket.setNoDely(self._socketInfo.socketId, noDelay, function() {});
+  chrome.socket.setNoDelay(self._socketInfo.socketId, noDelay, function() {});
 };
 
 net.Socket.prototype.setKeepAlive = function(enable, delay) {
